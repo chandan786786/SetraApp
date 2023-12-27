@@ -61,16 +61,21 @@ public class SplashActivity extends AppCompatActivity {
 
     }
     private void init2(){
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent=new Intent(SplashActivity.this,LoginActivity2.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NO_HISTORY|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            if(Utiilties.isEmulator()) {
+                dotsTextView.setText("Virtual Device Not Allowed !");
+                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(() -> {
+                    finish();
+                },600);
+            }else {
+                new Handler().postDelayed(() -> {
+                Intent intent = new Intent(SplashActivity.this, LoginActivity2.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
+                },1000);
             }
-        },1000);
+
 
     }
     @Override

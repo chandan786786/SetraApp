@@ -203,11 +203,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 if (result == null || !result.getAuthenticated()) {
                     alertDialog.setTitle("Failed");
                     alertDialog.setMessage("No result found ! try Again !!");
-                    alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            edit_user_name.setFocusable(true);
-                        }
-                    });
+                    alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", (dialog, which) -> edit_user_name.setFocusable(true));
                     alertDialog.show();
                 } else {
                     Intent cPannel = new Intent(getActivity(), MainActivity.class);
@@ -227,11 +223,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             } else {
                                 alertDialog.setTitle("Device Not Registered");
                                 alertDialog.setMessage("Sorry, your device is not registered!.\r\nPlease contact your Admin.");
-                                alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        edit_user_name.setFocusable(true);
-                                    }
-                                });
+                                alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", (dialog, which) -> edit_user_name.setFocusable(true));
                                 alertDialog.show();
                             }
                         }

@@ -43,17 +43,15 @@ public class MpinFragment extends Fragment {
     }
 
     private void bindEvents() {
-        passCodeView.setOnTextChangeListener(new PassCodeView.TextChangeListener() {
-            @Override public void onTextChanged(String text) {
-                if (text.length() == 4) {
-                    if (text.equals(PASSCODE)) {
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(intent);
-                        getActivity().finish();
-                    } else {
-                        passCodeView.setError(true);
-                    }
+        passCodeView.setOnTextChangeListener(text -> {
+            if (text.length() == 4) {
+                if (text.equals(PASSCODE)) {
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(intent);
+                    getActivity().finish();
+                } else {
+                    passCodeView.setError(true);
                 }
             }
         });
