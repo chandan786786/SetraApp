@@ -149,18 +149,10 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                   final AlertDialog alertDialog1 = new AlertDialog.Builder(LoginActivity2.this).create();
                    alertDialog1.setTitle("Forgot Password");
                    alertDialog1.setMessage("Are you sure to reset Password");
-                  alertDialog1.setButton(Dialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                          new Requestforgetpassword().execute(reqString(edit_user_name.getText().toString() + "|" + imei ));
-                      }
-                  });
-                  alertDialog1.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                          if(alertDialog1.isShowing()){
-                              alertDialog1.dismiss();
-                          }
+                  alertDialog1.setButton(Dialog.BUTTON_POSITIVE,"OK", (dialog, which) -> new Requestforgetpassword().execute(reqString(edit_user_name.getText().toString() + "|" + imei )));
+                  alertDialog1.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", (dialog, which) -> {
+                      if(alertDialog1.isShowing()){
+                          alertDialog1.dismiss();
                       }
                   });
                    alertDialog1.show();
@@ -226,11 +218,7 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
             if (result == null) {
                 alertDialog.setTitle("Failed");
                 alertDialog.setMessage("Something Went Wrong ! May be Server Problem !");
-                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        edit_user_name.setFocusable(true);
-                    }
-                });
+                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", (dialog, which) -> edit_user_name.setFocusable(true));
                 alertDialog.show();
             } else if (!result.getAuthenticated()) {
                 if((result.getMessageString().toString().contains("OTP SENT"))){
@@ -265,11 +253,7 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                         } else {
                             alertDialog.setTitle("Device Not Registered");
                             alertDialog.setMessage("Sorry, your device is not registered!.\r\nPlease contact your Admin.");
-                            alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    edit_user_name.setFocusable(true);
-                                }
-                            });
+                            alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK", (dialog, which) -> edit_user_name.setFocusable(true));
                             alertDialog.show();
                         }
                     }

@@ -84,41 +84,38 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final EditText epson = (EditText) dialog.findViewById(R.id.enter_otp);
         final Button button_submit = (Button) dialog.findViewById(R.id.button_submit);
         // if button is clicked, close the custom dialog
-        button_submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (button_submit.getText().toString().trim().length()<6){
-                    Toast.makeText(RegisterActivity.this, "Enter Valid OTP !", Toast.LENGTH_SHORT).show();
-                }else {
-                    dialog.dismiss();
+        button_submit.setOnClickListener(v -> {
+            if (button_submit.getText().toString().trim().length()<6){
+                Toast.makeText(RegisterActivity.this, "Enter Valid OTP !", Toast.LENGTH_SHORT).show();
+            }else {
+                dialog.dismiss();
 
-                    /* String userid = arr[0];
-        String password = arr[1];
-        String mobileNo = arr[2];
-        String email = arr[3];
-        String otp = arr[4];
-        String imei = arr[5];
-        String mobileDetails = model no company; */
-                    try{
-                        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                        if (tm != null) ;
-                        if (ActivityCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
-                        }
-                        new RegiterLoader().execute(edit_user_id.getText().toString().trim()+"|"+edit_pass.getText().toString().trim()+"|"+edit_reg_mobile.getText().toString().trim()+"|"+edit_email.getText().toString().trim()
-                                +"|"+epson.getText().toString().trim()+"|"+tm.getDeviceId()+"|"+android.os.Build.MODEL+" "+android.os.Build.BRAND);
-                    }catch (Exception e){}
-
-                }
+                /* String userid = arr[0];
+    String password = arr[1];
+    String mobileNo = arr[2];
+    String email = arr[3];
+    String otp = arr[4];
+    String imei = arr[5];
+    String mobileDetails = model no company; */
+                try{
+                    TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                    if (tm != null) ;
+                    if (ActivityCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    new RegiterLoader().execute(edit_user_id.getText().toString().trim()+"|"+edit_pass.getText().toString().trim()+"|"+edit_reg_mobile.getText().toString().trim()+"|"+edit_email.getText().toString().trim()
+                            +"|"+epson.getText().toString().trim()+"|"+tm.getDeviceId()+"|"+ Build.MODEL+" "+ Build.BRAND);
+                }catch (Exception e){}
 
             }
+
         });
         //Button Ok = (Button) dialog.findViewById(R.id.btn_OK);
         // if button is clicked, close the custom dialog
@@ -174,11 +171,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             }else {
                 alertDialog.setMessage("Server not Responding !");
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", (dialog, which) -> dialog.cancel());
                 alertDialog.show();
             }
         }
@@ -232,11 +225,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                edit_email.setText("");
             }else {
                 alertDialog.setMessage("Server not Responding !");
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", (dialog, which) -> dialog.cancel());
                 alertDialog.show();
             }
         }

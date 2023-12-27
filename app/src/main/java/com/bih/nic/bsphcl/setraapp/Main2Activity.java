@@ -115,24 +115,20 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             builder.setView(input);
             builder.setMessage("Would you like to get Transaction OTP ?")
                     .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            if (input.getText().toString().trim().equals("")||input.getText().toString().trim().length()<3) {
-                                Toast.makeText(Main2Activity.this, "Enter valid Transaction Id !", Toast.LENGTH_SHORT).show();
-                            }else if (!Utiilties.isOnline(Main2Activity.this)){
-                                Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
-                                new RequestTransactionOTPLoader().execute(userInfo2.getUserID()+"|"+userInfo2.getPassword()+"|"+userInfo2.getImeiNo()+"|"+"TP"+"|"+input.getText().toString());
-                            }
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        if (input.getText().toString().trim().equals("")||input.getText().toString().trim().length()<3) {
+                            Toast.makeText(Main2Activity.this, "Enter valid Transaction Id !", Toast.LENGTH_SHORT).show();
+                        }else if (!Utiilties.isOnline(Main2Activity.this)){
+                            Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
+                            new RequestTransactionOTPLoader().execute(userInfo2.getUserID()+"|"+userInfo2.getPassword()+"|"+userInfo2.getImeiNo()+"|"+"TP"+"|"+input.getText().toString());
                         }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //  Action for 'NO' Button
-                            dialog.cancel();
-                        }
+                    .setNegativeButton("No", (dialog, id) -> {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
                     });
             AlertDialog alert = builder.create();
             alert.setTitle("Transaction OTP");
@@ -149,24 +145,20 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             builder.setView(input);
             builder.setMessage("Would you like to get Counter Activation OTP ?")
                     .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            if (input.getText().toString().trim().equals("")||input.getText().toString().trim().length()<3) {
-                                Toast.makeText(Main2Activity.this, "Enter valid Counter Activtion Otp !", Toast.LENGTH_SHORT).show();
-                            }else if (!Utiilties.isOnline(Main2Activity.this)){
-                                Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
-                                new RequestTransactionOTPLoader().execute(userInfo2.getUserID()+"|"+userInfo2.getPassword()+"|"+userInfo2.getImeiNo()+"|"+"CP"+"|"+input.getText().toString());
-                            }
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        if (input.getText().toString().trim().equals("")||input.getText().toString().trim().length()<3) {
+                            Toast.makeText(Main2Activity.this, "Enter valid Counter Activtion Otp !", Toast.LENGTH_SHORT).show();
+                        }else if (!Utiilties.isOnline(Main2Activity.this)){
+                            Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
+                            new RequestTransactionOTPLoader().execute(userInfo2.getUserID()+"|"+userInfo2.getPassword()+"|"+userInfo2.getImeiNo()+"|"+"CP"+"|"+input.getText().toString());
                         }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //  Action for 'NO' Button
-                            dialog.cancel();
-                        }
+                    .setNegativeButton("No", (dialog, id) -> {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
                     });
             AlertDialog alert = builder.create();
             alert.setTitle("Counter Activation OTP");
@@ -176,21 +168,15 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Would you like to get Login OTP ?")
                     .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
-                           if (!Utiilties.isOnline(Main2Activity.this)){
-                                Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
-                            }else {
-                               new RequestLoginOTPLoader().execute(userInfo2.getUserID() + "|" + userInfo2.getPassword() + "|" + userInfo2.getImeiNo() + "|" + "LP");
-                           }
-                        }
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        UserInformation userInfo2=CommonPref.getUserDetails(Main2Activity.this);
+                       if (!Utiilties.isOnline(Main2Activity.this)){
+                            Toast.makeText(Main2Activity.this, "Please go online !", Toast.LENGTH_SHORT).show();
+                        }else {
+                           new RequestLoginOTPLoader().execute(userInfo2.getUserID() + "|" + userInfo2.getPassword() + "|" + userInfo2.getImeiNo() + "|" + "LP");
+                       }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                    .setNegativeButton("No", (dialog, id) -> dialog.cancel());
             AlertDialog alert = builder.create();
             alert.setTitle("Login OTP");
             alert.show();
@@ -275,11 +261,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 }
             }else{
                 alertDialog.setMessage("Server not Responding !");
-                alertDialog.setButton( DialogInterface.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                       dialog.cancel();
-                    }
-                });
+                alertDialog.setButton( DialogInterface.BUTTON_POSITIVE,"OK", (dialog, which) -> dialog.cancel());
                 alertDialog.show();
             }
         }
@@ -339,11 +321,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 }
             }else{
                 alertDialog.setMessage("Server not Responding !");
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", (dialog, which) -> dialog.cancel());
                 alertDialog.show();
             }
         }
