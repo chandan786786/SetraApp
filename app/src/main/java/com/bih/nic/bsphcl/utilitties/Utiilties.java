@@ -223,7 +223,6 @@ public class Utiilties {
 
 
 	public static String getDateTime() {
-
 		String date=getDateString();
 		String a="";
 		StringTokenizer st=new StringTokenizer(date," ");
@@ -242,9 +241,7 @@ public class Utiilties {
 
 
 		}
-
-
-		return date;
+        return date;
 	}
 
 
@@ -277,6 +274,7 @@ public class Utiilties {
 				|| Build.MODEL.contains("Android SDK built for x86")
 				|| Build.MODEL.contains("sdk_gphone_x86_64")
 				|| Build.MANUFACTURER.contains("Genymotion")
+				|| Build.MANUFACTURER.contains("genymotion")
 				|| Build.MANUFACTURER.contains("Google")
 				|| Build.MANUFACTURER.contains("google")
 				|| Build.PRODUCT.contains("sdk_google")

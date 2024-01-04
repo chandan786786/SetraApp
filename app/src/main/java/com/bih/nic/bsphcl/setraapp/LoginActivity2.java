@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.telephony.TelephonyManager;
@@ -66,12 +67,12 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
     }
     private void init() {
         text_imei= findViewById(R.id.txtimei);
-        text_ver = (TextView) findViewById(R.id.txtVersion);
-        edit_user_name = (EditText) findViewById(R.id.edit_username);
-        edit_pass = (EditText) findViewById(R.id.edit_pass);
-        button_login = (Button) findViewById(R.id.signin);
-        signup = (Button) findViewById(R.id.signup);
-        text_forgot_password = (TextView) findViewById(R.id.text_forget_pass);
+        text_ver =  findViewById(R.id.txtVersion);
+        edit_user_name =  findViewById(R.id.edit_username);
+        edit_pass =  findViewById(R.id.edit_pass);
+        button_login =  findViewById(R.id.signin);
+        signup =  findViewById(R.id.signup);
+        text_forgot_password =  findViewById(R.id.text_forget_pass);
         text_forgot_password.setOnClickListener(this);
         button_login.setOnClickListener(this);
         signup.setOnClickListener(this);
@@ -105,7 +106,7 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
         try {
             version = LoginActivity2.this.getPackageManager().getPackageInfo(LoginActivity2.this.getPackageName(), 0).versionName;
             Log.e("App Version : ", "" + version + " ( " + imei + " )");
-            text_ver.setText("App Version : " + version );
+            text_ver.setText("App Version : " + version+" J" );
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -115,7 +116,10 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.signin) {
-            if (edit_user_name.getText().toString().trim().equals("")) {
+            if(Debug.isDebuggerConnected()){
+                Toast.makeText(this, "Debugging not allowed !", Toast.LENGTH_SHORT).show();
+            }
+            else if (edit_user_name.getText().toString().trim().equals("")) {
                 Toast.makeText(LoginActivity2.this, "Enter User Name", Toast.LENGTH_SHORT).show();
             } else if (edit_pass.getText().toString().trim().equals("")) {
                 Toast.makeText(LoginActivity2.this, "Enter Password", Toast.LENGTH_SHORT).show();
@@ -125,16 +129,13 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                 filter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
                 smsReceiver=new SmsReceiver();
                 registerReceiver(smsReceiver, filter);
-                SmsReceiver.bindListener(new SmsListener() {
-                    @Override
-                    public void messageReceived(String messageText) {
-                        // text_resend.setVisibility(View.GONE);
-                        Log.d("activity",""+messageText);
-                        // dialog1.dismiss();
-                        //if (smsVerificationService!=null && smsVerificationService.getStatus()!=SmsVerificationService.Status.RUNNING) {
-                        new SmsVerificationService(LoginActivity2.this,imei,imei).execute(messageText.split(" ")[0].trim());
-                        //}
-                    }
+                SmsReceiver.bindListener(messageText -> {
+                    // text_resend.setVisibility(View.GONE);
+                    Log.d("activity",""+messageText);
+                    // dialog1.dismiss();
+                    //if (smsVerificationService!=null && smsVerificationService.getStatus()!=SmsVerificationService.Status.RUNNING) {
+                    new SmsVerificationService(LoginActivity2.this,imei,imei).execute(messageText.split(" ")[0].trim());
+                    //}
                 });
                 new LoginLoader().execute(edit_user_name.getText().toString().trim() + "|" + edit_pass.getText().toString().trim() + "|" + imei.trim());
             }
@@ -149,7 +150,8 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                   final AlertDialog alertDialog1 = new AlertDialog.Builder(LoginActivity2.this).create();
                    alertDialog1.setTitle("Forgot Password");
                    alertDialog1.setMessage("Are you sure to reset Password");
-                  alertDialog1.setButton(Dialog.BUTTON_POSITIVE,"OK", (dialog, which) -> new Requestforgetpassword().execute(reqString(edit_user_name.getText().toString() + "|" + imei )));
+                  alertDialog1.setButton(Dialog.BUTTON_POSITIVE,"OK", (dialog, which) ->
+                          new Requestforgetpassword().execute(reqString(edit_user_name.getText().toString() + "|" + imei )));
                   alertDialog1.setButton(Dialog.BUTTON_NEGATIVE, "Cancel", (dialog, which) -> {
                       if(alertDialog1.isShowing()){
                           alertDialog1.dismiss();
@@ -227,13 +229,15 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                     dialog.show();
                 }else{
                     String msgs="IMEI MISMATCH";
-                    if(result.getMessageString().equalsIgnoreCase(msgs)){
+                    if(result.getMessageString().equalsIgnoreCase(msgs) && !result.isImeiUpdated()){
                         text_imei.setVisibility(View.VISIBLE);
                         text_imei.setText("IMEI NO : "+imei);
+                        alertForImeiEntry(imei.trim(),result);
+                    }else {
+                        alertDialog.setTitle("Failed");
+                        alertDialog.setMessage("Authentication Failed" + result.getMessageString());
+                        alertDialog.show();
                     }
-                    alertDialog.setTitle("Failed");
-                    alertDialog.setMessage("Authentication Failed" + result.getMessageString());
-                    alertDialog.show();
                 }
             } else {
                 Intent cPannel = new Intent(LoginActivity2.this, Main2Activity.class);
@@ -273,6 +277,9 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
+
+
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private String reqString(String req_string) {
         byte[] chipperdata = Utiilties.rsaEncrypt(req_string.getBytes(), LoginActivity2.this);
@@ -360,5 +367,14 @@ public class LoginActivity2 extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(activity, "Server Problem", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    private void alertForImeiEntry(UserInformation userInformation) {
+        System.err.println("userInformation");
+        System.err.println(userInformation);
+        Intent intent =new Intent(LoginActivity2.this,ImeiUpdationActivity.class);
+        intent.putExtra("imei",imei.trim());
+        intent.putExtra("user",userInformation);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
     }
 }

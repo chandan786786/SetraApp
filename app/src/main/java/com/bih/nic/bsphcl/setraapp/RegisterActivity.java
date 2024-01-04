@@ -37,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        toolbar_mpin=(Toolbar)findViewById(R.id.toolbar_mpin);
+        toolbar_mpin=findViewById(R.id.toolbar_mpin);
         toolbar_mpin.setTitle("Register");
         setSupportActionBar(toolbar_mpin);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -52,11 +52,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void init() {
-        edit_user_id=(EditText) findViewById(R.id.edit_user_id);
-        edit_pass=(EditText) findViewById(R.id.edit_pass);
-        edit_reg_mobile=(EditText) findViewById(R.id.edit_reg_mobile);
-        edit_email=(EditText) findViewById(R.id.edit_email);
-        button_change_mpin=(Button)findViewById(R.id.button_reg);
+        edit_user_id= findViewById(R.id.edit_user_id);
+        edit_pass= findViewById(R.id.edit_pass);
+        edit_reg_mobile= findViewById(R.id.edit_reg_mobile);
+        edit_email= findViewById(R.id.edit_email);
+        button_change_mpin=findViewById(R.id.button_reg);
         button_change_mpin.setOnClickListener(this);
     }
 
@@ -78,11 +78,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void AlertDialogForPrinter() {
         final Dialog dialog = new Dialog(RegisterActivity.this);
         /*	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); //before*/
-
         dialog.setContentView(R.layout.otp_dialog);
         // set the custom dialog components - text, image and button
-        final EditText epson = (EditText) dialog.findViewById(R.id.enter_otp);
-        final Button button_submit = (Button) dialog.findViewById(R.id.button_submit);
+        final EditText epson =  dialog.findViewById(R.id.enter_otp);
+        final Button button_submit =  dialog.findViewById(R.id.button_submit);
         // if button is clicked, close the custom dialog
         button_submit.setOnClickListener(v -> {
             if (button_submit.getText().toString().trim().length()<6){
@@ -117,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
 
         });
-        //Button Ok = (Button) dialog.findViewById(R.id.btn_OK);
+        //Button Ok =  dialog.findViewById(R.id.btn_OK);
         // if button is clicked, close the custom dialog
         dialog.show();
     }

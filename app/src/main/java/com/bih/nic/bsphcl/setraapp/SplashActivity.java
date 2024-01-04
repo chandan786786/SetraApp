@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -40,6 +41,7 @@ public class SplashActivity extends AppCompatActivity {
     private static String imei;
     MarshmallowPermission MARSHMALLOW_PERMISSION;
     DotsTextView dotsTextView;
+    private boolean initse = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,9 @@ public class SplashActivity extends AppCompatActivity {
 
     }
     private void init2(){
-            if(Utiilties.isEmulator()) {
+        initse=true;
+            if(Utiilties.isEmulator() ||  Debug.isDebuggerConnected()){
+            Toast.makeText(this, "Virtual Device Not Allowed !", Toast.LENGTH_SHORT).show();
                 dotsTextView.setText("Virtual Device Not Allowed !");
                 Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(() -> {
@@ -138,25 +142,28 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private boolean checkAndRequestPermissions() {
-
-        int read_phone = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-        int read_external = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int receivesms = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
-        int readsms =  ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
+        int read_phone_state = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        int read_sms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
+        int receve_sms = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+        int write_ex_storage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int read_ex_storage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         List<String> listPermissionsNeeded = new ArrayList<>();
-
-        if (read_external != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
-        if (read_phone != PackageManager.PERMISSION_GRANTED) {
+        if (read_phone_state != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
         }
-        if (receivesms != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
+        if (write_ex_storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-        if (readsms != PackageManager.PERMISSION_GRANTED) {
+        if (read_ex_storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (read_sms != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_SMS);
         }
+        if (receve_sms != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
+        }
+
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this,
                     listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MY_PERMISSIONS_REQUEST_ACCOUNTS);
@@ -172,12 +179,9 @@ public class SplashActivity extends AppCompatActivity {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCOUNTS:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //init();
-                    init2();
+                    if (!initse) init2();
                 } else {
-                    //You did not accept the request can not use the functionality.
-                    Toast.makeText(this, "Please Enable All permissions !", Toast.LENGTH_SHORT).show();
-                    finish();
+                    if (!initse) init2();
                 }
                 break;
         }
@@ -243,21 +247,14 @@ public class SplashActivity extends AppCompatActivity {
                     ab.setTitle(versioninfo.getAdminTitle());
                     ab.setMessage(Html.fromHtml(versioninfo.getAdminMsg()));
                     ab.setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    dialog.dismiss();
-                                    showDailog(ab, versioninfo);
+                            (dialog, whichButton) -> {
+                                dialog.dismiss();
+                                showDailog(ab, versioninfo);
 
-                                }
                             });
-                    ab.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            start();
-                        }
+                    ab.setNegativeButton("Ignore", (dialog, which) -> {
+                        dialog.dismiss();
+                        start();
                     });
 
                     ab.show();
@@ -281,22 +278,13 @@ public class SplashActivity extends AppCompatActivity {
 
             AlertDialog.Builder ab = new AlertDialog.Builder(SplashActivity.this);
             ab.setMessage("Internet Connection is not avaliable. Please Turn ON Network Connection OR Continue With Off-line Mode.");
-            ab.setPositiveButton("Turn On Network Connection", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Intent I = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-                    startActivity(I);
-                    //new CheckUpdate().execute();
-                }
+            ab.setPositiveButton("Turn On Network Connection", (dialog, whichButton) -> {
+                Intent I = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                startActivity(I);
+                //new CheckUpdate().execute();
             });
 
-            ab.setNegativeButton("Continue Offline", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-
-                    start();
-                }
-            });
+            ab.setNegativeButton("Continue Offline", (dialog, whichButton) -> start());
 
             ab.create().getWindow().getAttributes().windowAnimations = R.style.alert_animation;
             ab.show();
@@ -326,28 +314,19 @@ public class SplashActivity extends AppCompatActivity {
                 ab.setMessage(versioninfo.getUpdateMsg());
 
                 ab.setPositiveButton("Update",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                Intent myWebLink = new Intent(
-                                        android.content.Intent.ACTION_VIEW);
-                                myWebLink.setData(Uri.parse(versioninfo.getAppUrl()));
-                                startActivity(myWebLink);
-                                dialog.dismiss();
-                            }
+                        (dialog, whichButton) -> {
+                            Intent myWebLink = new Intent(
+                                    Intent.ACTION_VIEW);
+                            myWebLink.setData(Uri.parse(versioninfo.getAppUrl()));
+                            startActivity(myWebLink);
+                            dialog.dismiss();
                         });
                 ab.setNegativeButton("Ignore",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
+                        (dialog, whichButton) -> {
 
-                                dialog.dismiss();
+                            dialog.dismiss();
 
-                                start();
-                            }
-
+                            start();
                         });
 
                 ab.show();
@@ -356,16 +335,12 @@ public class SplashActivity extends AppCompatActivity {
                 ab.setTitle(versioninfo.getUpdateTile());
                 ab.setMessage(versioninfo.getUpdateMsg());
                 ab.setPositiveButton("Update",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                Intent myWebLink = new Intent(android.content.Intent.ACTION_VIEW);
-                                myWebLink.setData(Uri.parse(versioninfo.getAppUrl()));
-                                startActivity(myWebLink);
-                                dialog.dismiss();
+                        (dialog, whichButton) -> {
+                            Intent myWebLink = new Intent(Intent.ACTION_VIEW);
+                            myWebLink.setData(Uri.parse(versioninfo.getAppUrl()));
+                            startActivity(myWebLink);
+                            dialog.dismiss();
 
-                            }
                         });
 
                 ab.show();

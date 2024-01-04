@@ -1,10 +1,12 @@
 package com.bih.nic.bsphcl.model;
 
+import java.io.Serializable;
+
 /**
  * Created by NIC2 on 08-03-2018.
  */
 
-public class UserInformation {
+public class UserInformation implements Serializable {
     private String MessageString;
     private String UserID;
     private String UserName;
